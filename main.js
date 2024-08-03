@@ -5,6 +5,7 @@ window.addEventListener("load", () => {
 	const context = canvas.getContext("2d");
 	canvas.width = 600;
 	canvas.height = 800;
+	context.fillStyle = "white";
 
 	const game = new Game(canvas);
 

@@ -8,6 +8,8 @@ class Game {
 		this.canvas = canvas;
 		this.width = this.canvas.width;
 		this.height = this.canvas.height;
+		this.level = 1;
+		this.enemiesStarted = 0;
 
 		// Player and movement properties and functionalities
 		this.keys = [];
@@ -24,7 +26,7 @@ class Game {
 		window.addEventListener("keyup", (event) => {
 			this.keys = this.keys.filter((key) => key !== event.code);
 
-			// Disable gun on space key up
+			// Enable gun on space key up
 			if (event.code === "Space") {
 				this.player.activateGun(false);
 			}
@@ -35,19 +37,46 @@ class Game {
 		this.numberOfProjectiles = 10;
 
 		this.createProjectiles();
+
+		// Enemy properties and functionalities
+		this.enemies = [];
+		this.numberOfEnemies = 20;
+
+		this.createEnemies();
 	}
 
 	render(context) {
+		// Create player
 		this.player.draw(context);
 		this.player.update();
+
+		// Create projectiles
 		this.projectiles.forEach((projectile) => {
 			if (!projectile.free) {
 				projectile.draw(context);
 				projectile.update();
 			}
 		});
+
+		// Create enemies
+		this.enemies.forEach((enemy) => {
+			if (!enemy.isFree) {
+				enemy.draw(context);
+				enemy.update();
+			}
+		});
+
+		// Run enemies
+		if (this.enemiesStarted < this.level) {
+			this.enemiesStarted++;
+			console.log(this.enemiesStarted, "enemies started");
+			setTimeout(() => {
+				this.startEnemies();
+			}, 2000);
+		}
 	}
 
+	// Projectiles functionalities
 	createProjectiles() {
 		for (let i = 0; i < this.numberOfProjectiles; i++) {
 			this.projectiles.push(new Projectile());
@@ -59,6 +88,19 @@ class Game {
 			if (this.projectiles[i].free) {
 				return this.projectiles[i];
 			}
+		}
+	}
+
+	// Enemies functionalities
+	createEnemies() {
+		for (let i = 0; i < this.numberOfEnemies; i++) {
+			this.enemies.push(new Enemy(this));
+		}
+	}
+
+	startEnemies() {
+		for (let i = 0; i < this.level; i++) {
+			this.enemies[i].isFree = false;
 		}
 	}
 }
